@@ -39,12 +39,15 @@ namespace principia {
 			std::vector<ImageData> _walls;
 			std::vector<ImageData> _food;
 			std::vector<ImageData> _characters;
+			glm::vec2 level_size;
 
 			//This section is for the things related to wall detection
 			Memo _visited;
 			vec2 DetectWallSize(int r, int c, const ColorGraph& graph);
-			int CheckWallRight(int r, int c, const ColorGraph& graph);
 			int CheckWallDown(int r, int c, const ColorGraph& graph);
+			int CheckWallRight(int r, int c, const ColorGraph& graph);
+
+			void ConvertObjectPosition(ObjectData& obj);
 		};
 
 	}

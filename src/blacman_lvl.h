@@ -14,15 +14,19 @@ namespace principia {
 			CollisionType col_type;
 			glm::vec3 size;
 			glm::vec3 pos;
+			int material;
 		};
 
 		struct BlacmanLvl {
 			BlacmanLvl() {};
-			BlacmanLvl(std::vector<ObjectData> w, std::vector<ObjectData> f, std::vector<ObjectData> c) :
-				walls(w), food(f), characters(c) {};
+			BlacmanLvl(std::vector<ObjectData> w, std::vector<ObjectData> f, std::vector<ObjectData> c, ObjectData floor) :
+				walls(w), food(f), characters(c), floor(floor) {};
+			BlacmanLvl(std::vector<ObjectData> w, std::vector<ObjectData> f, std::vector<ObjectData> c, ObjectData floor, std::string mat) :
+				walls(w), food(f), characters(c), floor(floor) {};
 			std::vector<ObjectData> walls;
 			std::vector<ObjectData> food;
 			std::vector<ObjectData> characters;
+			ObjectData floor;
 		};
 	}
 }

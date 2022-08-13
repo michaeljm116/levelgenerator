@@ -12,6 +12,7 @@ namespace principia {
 			~Serializer();
 			void SaveLvl(std::string file, BlacmanLvl lvl, int lvl_num);
 			XMLElement* SaveNode(const ObjectData& obj, XMLDocument* doc);
+			XMLElement* SaveCamAndLights(XMLNode* root, XMLDocument* doc);
 		private:
 
 		};

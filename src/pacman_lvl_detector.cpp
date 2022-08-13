@@ -13,6 +13,7 @@ namespace principia {
 
 		void BlacmanLvlConverter::GraphToLevel(const ColorGraph& graph)
 		{
+			level_size = glm::vec2(graph.size(), graph[0].size());
 			_visited = Memo(graph.size(), std::vector<bool>(graph[0].size(), false));
 			for (int r = 0; r < graph.size(); ++r) {
 				for (int c = 0; c < graph[0].size(); ++c) {
@@ -26,7 +27,7 @@ namespace principia {
 			if (_visited[r][c]) return;
 			_visited[r][c] = true;
 			auto color = graph[r][c];
-			auto return_data = ImageData(kTypeNone, kSubTypeNone, vec2(1,1), vec2(r, c));
+			auto return_data = ImageData(kTypeNone, kSubTypeNone, vec2(1,1), vec2(c, r));
 			
 			switch (color)
 			{
@@ -90,13 +91,13 @@ namespace principia {
 
 			for (int i = 0; i < _walls.size(); ++i) {
 				ObjectData o;
-				o.name = std::string("Wall" + std::to_string(i) + ")");
+				o.name = std::string("Wall(" + std::to_string(i) + ")");
 				o.size = glm::vec3(_walls[i].size.x, 2, _walls[i].size.y);
 				o.pos = glm::vec3(_walls[i].position.x, 0, _walls[i].position.y);
 				o.type = ObjectType::BOX;
 				o.col_type = CollisionType::Box;
 				o.flags |= COMPONENT_MATERIAL | COMPONENT_TRANSFORM | COMPONENT_PRIMITIVE | COMPONENT_COLIDER | COMPONENT_HEADNODE;
-
+				ConvertObjectPosition(o);
 				walls.emplace_back(o);
 			}
 
@@ -105,16 +106,17 @@ namespace principia {
 
 				if (_food[i].subtype == kSubTypeBigDot) {
 					o.name = "pill(" + std::to_string(i) + ")";
-					o.size = glm::vec3(0.2f);
+					o.size = glm::vec3(0.6f);
 				}
 				else {
 					o.name = "food(" + std::to_string(i) + ")";
-					o.size = glm::vec3(0.1f);
+					o.size = glm::vec3(0.3f);
 				}
-				o.pos = glm::vec3(_food[i].position.x, 0, _food[i].position.y);
+				o.pos = glm::vec3(_food[i].position.x + 0.5f, 0, _food[i].position.y);
 				o.type = ObjectType::SPHERE;
 				o.col_type = CollisionType::Sphere;
 				o.flags |= COMPONENT_MATERIAL | COMPONENT_TRANSFORM | COMPONENT_PRIMITIVE | COMPONENT_COLIDER | COMPONENT_HEADNODE;
+				ConvertObjectPosition(o);
 				food.emplace_back(o);
 			}
 
@@ -123,20 +125,30 @@ namespace principia {
 
 				if (_characters[i].type == kTypePlayer) {
 					o.name = "BlacMan";
-					o.size = glm::vec3(0.3f);
+					o.size = glm::vec3(0.8f);
 				}
 				else {
 					o.name = "Enemy(" + std::to_string(i) + ")";
-					o.size = glm::vec3(0.275f);
+					o.size = glm::vec3(0.75f);
 				}
-				o.pos = glm::vec3(_characters[i].position.x, 0, _characters[i].position.y);
+				o.pos = glm::vec3(_characters[i].position.x, -1, _characters[i].position.y);
 				o.type = ObjectType::BOX;
 				o.col_type = CollisionType::Capsule;
 				o.flags |= COMPONENT_MATERIAL | COMPONENT_TRANSFORM | COMPONENT_PRIMITIVE | COMPONENT_COLIDER | COMPONENT_HEADNODE;
+				ConvertObjectPosition(o);
 				characters.emplace_back(o);
 			}
 
-			return BlacmanLvl(walls, food, characters);
+
+			ObjectData floor;
+			floor.name = "Floor";
+			floor.size = glm::vec3(level_size.x * 0.5f, 1, level_size.y * 0.5f);
+			floor.pos = glm::vec3(level_size.x * 0.5f, 0, level_size.y * 0.5f);
+			floor.col_type = CollisionType::Box;
+			floor.type = ObjectType::BOX;
+			floor.flags |= COMPONENT_MATERIAL | COMPONENT_TRANSFORM | COMPONENT_PRIMITIVE | COMPONENT_COLIDER | COMPONENT_HEADNODE;
+
+			return BlacmanLvl(walls, food, characters, floor);
 		}
 
 		void BlacmanLvlConverter::AddWall(const ImageData& d)
@@ -152,7 +164,7 @@ namespace principia {
 			if(left_wall && right_wall){
 				_walls.push_back(right_copy);
 				left_copy.size.y--;
-				left_copy.position.y--;
+				left_copy.position.y++;
 				_walls.push_back(left_copy);
 			}
 			else if(right_wall){
@@ -174,7 +186,7 @@ namespace principia {
 
 			return size;
 		}
-		int BlacmanLvlConverter::CheckWallRight(int r, int c, const ColorGraph& graph)
+		int BlacmanLvlConverter::CheckWallDown(int r, int c, const ColorGraph& graph)
 		{
 			int size = 1;
 			bool can_go_right = ((r + 1) < graph.size()) && (graph[r + 1][c] == kColorBlue);
@@ -187,7 +199,7 @@ namespace principia {
 			}
 			return size;
 		}
-		int BlacmanLvlConverter::CheckWallDown(int r, int c, const ColorGraph& graph)
+		int BlacmanLvlConverter::CheckWallRight(int r, int c, const ColorGraph& graph)
 		{
 			int size = 1;
 			bool can_go_down = ((c + 1) < graph[0].size()) && (graph[r][c + 1] == kColorBlue);
@@ -199,6 +211,14 @@ namespace principia {
 				can_go_down = ((c + 1) < graph[0].size()) && (graph[r][c + 1] == kColorBlue);
 			}
 			return size;
+		}
+		void BlacmanLvlConverter::ConvertObjectPosition(ObjectData& obj)
+		{
+			auto extents = obj.size * 0.5f;
+			auto center = obj.pos + extents;
+			center.z = level_size.y - center.z;
+			obj.pos = center;
+			obj.size = extents;
 		}
 	}
 }

@@ -19,7 +19,8 @@ namespace principia {
 			scene_number->SetAttribute("Num", lvl_num);
 
 			p_root->InsertFirstChild(scene_number);
-
+			SaveCamAndLights(p_root, &doc);
+			p_root->InsertEndChild(SaveNode(lvl.floor, &doc));
 			for (auto o : lvl.characters) {
 				p_root->InsertEndChild(SaveNode(o, &doc));
 			}
@@ -95,6 +96,100 @@ namespace principia {
 			node->InsertEndChild(collision);
 
 			return node;
+		}
+		XMLElement* Serializer::SaveCamAndLights(XMLNode* root, XMLDocument* doc)
+		{
+			//Camera
+			XMLElement* cam_node = doc->NewElement("Node");
+			cam_node->SetAttribute("Name", "Camera");
+			cam_node->SetAttribute("hasChildren", false);
+			cam_node->SetAttribute("eFlags", 131091);
+			cam_node->SetAttribute("gFlags", 0);
+			cam_node->SetAttribute("Dynamic", true);
+
+
+			//---------- Transform ---------- 
+			XMLElement* transform = doc->NewElement("Transform");
+			XMLElement* position = doc->NewElement("Position");
+			XMLElement* rotation = doc->NewElement("Rotation");
+			XMLElement* scale = doc->NewElement("Scale");
+
+			position->SetAttribute("x", 15);
+			position->SetAttribute("y", 27.25);
+			position->SetAttribute("z", -0.44999999);
+
+			rotation->SetAttribute("x", -30);
+			rotation->SetAttribute("y", 0.01);
+			rotation->SetAttribute("z", 0);
+
+			scale->SetAttribute("x", 1);
+			scale->SetAttribute("y", 1);
+			scale->SetAttribute("z", 1);
+
+			transform->InsertFirstChild(position);
+			transform->InsertAfterChild(position, rotation);
+			transform->InsertEndChild(scale);
+						
+			XMLElement* aspect = doc->NewElement("AspectRatio");
+			aspect->SetAttribute("ratio", 1.7777778);
+			XMLElement* fov = doc->NewElement("FOV");
+			fov->SetAttribute("fov", 104);
+
+			cam_node->InsertEndChild(transform);
+			cam_node->InsertEndChild(aspect);
+			cam_node->InsertEndChild(fov);
+			root->InsertEndChild(cam_node);
+		
+
+			//Lights
+			XMLElement* light_node = doc->NewElement("Node");
+			light_node->SetAttribute("Name", "Light");
+			light_node->SetAttribute("hasChildren", false);
+			light_node->SetAttribute("eFlags", 131083);
+			light_node->SetAttribute("gFlags", 0);
+			light_node->SetAttribute("Dynamic", true);
+
+			//---------- Light Transform ---------- 
+			XMLElement* ltransform = doc->NewElement("Transform");
+			XMLElement* lposition = doc->NewElement("Position");
+			XMLElement* lrotation = doc->NewElement("Rotation");
+			XMLElement* lscale = doc->NewElement("Scale");
+
+			lposition->SetAttribute("x", 16.068882);
+			lposition->SetAttribute("y", 16.28064919);
+			lposition->SetAttribute("z", 16.3831186);
+
+			lrotation->SetAttribute("x", 0);
+			lrotation->SetAttribute("y", 0);
+			lrotation->SetAttribute("z", 0);
+
+			lscale->SetAttribute("x", 1);
+			lscale->SetAttribute("y", 1);
+			lscale->SetAttribute("z", 1);
+
+			ltransform->InsertFirstChild(lposition);
+			ltransform->InsertAfterChild(lposition, lrotation);
+			ltransform->InsertEndChild(lscale);
+
+
+			XMLElement* color = doc->NewElement("Color");
+			color->SetAttribute("r", 255);
+			color->SetAttribute("g", 255);
+			color->SetAttribute("b", 255);
+
+			XMLElement* intensity = doc->NewElement("Intensity");
+			intensity->SetAttribute("i", 1000);
+
+			XMLElement* ID = doc->NewElement("ID");
+			ID->SetAttribute("id", 0);
+
+			light_node->InsertEndChild(ltransform);
+			light_node->InsertEndChild(color);
+			light_node->InsertEndChild(intensity);
+			light_node->InsertEndChild(ID);
+			root->InsertEndChild(light_node);
+
+			return nullptr;
 		}
 	}
 }
