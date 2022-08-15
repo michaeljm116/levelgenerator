@@ -68,7 +68,7 @@ namespace principia {
 
 			//---------- Material ---------- 
 			XMLElement* material = doc->NewElement("Material");
-			material->SetAttribute("ID", 0);
+			material->SetAttribute("ID", obj.material);
 			node->InsertEndChild(material);
 
 			//---------- ObjectID ----------
@@ -115,12 +115,12 @@ namespace principia {
 			XMLElement* scale = doc->NewElement("Scale");
 
 			position->SetAttribute("x", 15);
-			position->SetAttribute("y", 27.25);
-			position->SetAttribute("z", -0.44999999);
+			position->SetAttribute("y", 46.25);
+			position->SetAttribute("z", 12.410);
 
-			rotation->SetAttribute("x", -30);
-			rotation->SetAttribute("y", 0.01);
-			rotation->SetAttribute("z", 0);
+			rotation->SetAttribute("x", 0);
+			rotation->SetAttribute("y", 0);
+			rotation->SetAttribute("z", 0.0001);
 
 			scale->SetAttribute("x", 1);
 			scale->SetAttribute("y", 1);
@@ -155,9 +155,9 @@ namespace principia {
 			XMLElement* lrotation = doc->NewElement("Rotation");
 			XMLElement* lscale = doc->NewElement("Scale");
 
-			lposition->SetAttribute("x", 16.068882);
-			lposition->SetAttribute("y", 16.28064919);
-			lposition->SetAttribute("z", 16.3831186);
+			lposition->SetAttribute("x", 14.3);
+			lposition->SetAttribute("y", 27.141);
+			lposition->SetAttribute("z", 13.323);
 
 			lrotation->SetAttribute("x", 0);
 			lrotation->SetAttribute("y", 0);

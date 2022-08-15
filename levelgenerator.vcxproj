@@ -145,6 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\tinyxml2\tinyxml2.h" />
+    <ClInclude Include="lib\xxhash\xxhash.hpp" />
     <ClInclude Include="src\blacman_lvl.h" />
     <ClInclude Include="src\component_types.h" />
     <ClInclude Include="src\image_convert.h" />

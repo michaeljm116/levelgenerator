@@ -90,7 +90,7 @@ namespace principia {
 			characters.reserve(_characters.size());
 
 			for (int i = 0; i < _walls.size(); ++i) {
-				ObjectData o;
+				ObjectData o = ObjectData("Blue");
 				o.name = std::string("Wall(" + std::to_string(i) + ")");
 				o.size = glm::vec3(_walls[i].size.x, 2, _walls[i].size.y);
 				o.pos = glm::vec3(_walls[i].position.x, 0, _walls[i].position.y);
@@ -105,10 +105,12 @@ namespace principia {
 				ObjectData o;
 
 				if (_food[i].subtype == kSubTypeBigDot) {
+					o = ObjectData("Gold");
 					o.name = "pill(" + std::to_string(i) + ")";
 					o.size = glm::vec3(0.6f);
 				}
 				else {
+					o = ObjectData("White");
 					o.name = "food(" + std::to_string(i) + ")";
 					o.size = glm::vec3(0.3f);
 				}
@@ -124,6 +126,7 @@ namespace principia {
 				ObjectData o;
 
 				if (_characters[i].type == kTypePlayer) {
+					o = ObjectData("SnakeGreen");
 					o.name = "BlacMan";
 					o.size = glm::vec3(0.8f);
 				}
@@ -131,19 +134,19 @@ namespace principia {
 					o.name = "Enemy(" + std::to_string(i) + ")";
 					o.size = glm::vec3(0.75f);
 				}
-				o.pos = glm::vec3(_characters[i].position.x, -1, _characters[i].position.y);
+				o.pos = glm::vec3(_characters[i].position.x, 1, _characters[i].position.y);
 				o.type = ObjectType::BOX;
-				o.col_type = CollisionType::Capsule;
+				o.col_type = CollisionType::Box;
 				o.flags |= COMPONENT_MATERIAL | COMPONENT_TRANSFORM | COMPONENT_PRIMITIVE | COMPONENT_COLIDER | COMPONENT_HEADNODE;
 				ConvertObjectPosition(o);
 				characters.emplace_back(o);
 			}
 
 
-			ObjectData floor;
+			ObjectData floor = ObjectData("Black");
 			floor.name = "Floor";
 			floor.size = glm::vec3(level_size.x * 0.5f, 1, level_size.y * 0.5f);
-			floor.pos = glm::vec3(level_size.x * 0.5f, 0, level_size.y * 0.5f);
+			floor.pos = glm::vec3(level_size.x * 0.5f, -1, level_size.y * 0.5f);
 			floor.col_type = CollisionType::Box;
 			floor.type = ObjectType::BOX;
 			floor.flags |= COMPONENT_MATERIAL | COMPONENT_TRANSFORM | COMPONENT_PRIMITIVE | COMPONENT_COLIDER | COMPONENT_HEADNODE;
