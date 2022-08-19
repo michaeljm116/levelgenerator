@@ -1,5 +1,5 @@
 #include "pacman_lvl_detector.h"
-
+#include "helper.h"
 namespace principia {
 	namespace lvlgen {
 		BlacmanLvlConverter::BlacmanLvlConverter(const ColorGraph& graph)
@@ -84,6 +84,7 @@ namespace principia {
 			std::vector<ObjectData> walls;
 			std::vector<ObjectData> food;
 			std::vector<ObjectData> characters;
+			float floor_depth = 1.f;
 
 			walls.reserve(_walls.size());
 			food.reserve(_food.size());
@@ -93,7 +94,7 @@ namespace principia {
 				ObjectData o = ObjectData("Blue");
 				o.name = std::string("Wall(" + std::to_string(i) + ")");
 				o.size = glm::vec3(_walls[i].size.x, 2, _walls[i].size.y);
-				o.pos = glm::vec3(_walls[i].position.x, 0, _walls[i].position.y);
+				o.pos = glm::vec3(_walls[i].position.x, std::fma(o.size.y, 0.5f, floor_depth), _walls[i].position.y);
 				o.type = ObjectType::BOX;
 				o.col_type = CollisionType::Box;
 				o.flags |= COMPONENT_MATERIAL | COMPONENT_TRANSFORM | COMPONENT_PRIMITIVE | COMPONENT_COLIDER | COMPONENT_HEADNODE;
@@ -114,9 +115,10 @@ namespace principia {
 					o.name = "food(" + std::to_string(i) + ")";
 					o.size = glm::vec3(0.3f);
 				}
-				o.pos = glm::vec3(_food[i].position.x + 0.5f, 0, _food[i].position.y);
-				o.type = ObjectType::SPHERE;
-				o.col_type = CollisionType::Sphere;
+				o.pos = glm::vec3(_food[i].position.x + 0.5f - (o.size.x * 0.5f), std::fma(o.size.y, 0.5f, floor_depth + 1), _food[i].position.y + 0.5f - (o.size.y * 0.5f));
+				o.rot = RandomRotation();
+				o.type = ObjectType::BOX;
+				o.col_type = CollisionType::Ghost;
 				o.flags |= COMPONENT_MATERIAL | COMPONENT_TRANSFORM | COMPONENT_PRIMITIVE | COMPONENT_COLIDER | COMPONENT_HEADNODE;
 				ConvertObjectPosition(o);
 				food.emplace_back(o);
@@ -134,9 +136,9 @@ namespace principia {
 					o.name = "Enemy(" + std::to_string(i) + ")";
 					o.size = glm::vec3(0.75f);
 				}
-				o.pos = glm::vec3(_characters[i].position.x, 1, _characters[i].position.y);
-				o.type = ObjectType::BOX;
-				o.col_type = CollisionType::Box;
+				o.pos = glm::vec3(_characters[i].position.x, std::fma(o.size.y, 0.5f, floor_depth), _characters[i].position.y);
+				o.type = ObjectType::SPHERE;
+				o.col_type = CollisionType::Sphere;
 				o.flags |= COMPONENT_MATERIAL | COMPONENT_TRANSFORM | COMPONENT_PRIMITIVE | COMPONENT_COLIDER | COMPONENT_HEADNODE;
 				ConvertObjectPosition(o);
 				characters.emplace_back(o);
@@ -146,7 +148,7 @@ namespace principia {
 			ObjectData floor = ObjectData("Black");
 			floor.name = "Floor";
 			floor.size = glm::vec3(level_size.x * 0.5f, 1, level_size.y * 0.5f);
-			floor.pos = glm::vec3(level_size.x * 0.5f, -1, level_size.y * 0.5f);
+			floor.pos = glm::vec3(level_size.x * 0.5f, floor_depth, level_size.y * 0.5f);
 			floor.col_type = CollisionType::Box;
 			floor.type = ObjectType::BOX;
 			floor.flags |= COMPONENT_MATERIAL | COMPONENT_TRANSFORM | COMPONENT_PRIMITIVE | COMPONENT_COLIDER | COMPONENT_HEADNODE;

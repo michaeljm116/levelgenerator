@@ -148,6 +148,7 @@
     <ClInclude Include="lib\xxhash\xxhash.hpp" />
     <ClInclude Include="src\blacman_lvl.h" />
     <ClInclude Include="src\component_types.h" />
+    <ClInclude Include="src\helper.h" />
     <ClInclude Include="src\image_convert.h" />
     <ClInclude Include="src\image_data.h" />
     <ClInclude Include="src\pacman_lvl_detector.h" />

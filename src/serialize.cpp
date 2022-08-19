@@ -52,9 +52,9 @@ namespace principia {
 			position->SetAttribute("y", obj.pos.y);
 			position->SetAttribute("z", obj.pos.z);
 
-			rotation->SetAttribute("x", 0);
-			rotation->SetAttribute("y", 0);
-			rotation->SetAttribute("z", 0);
+			rotation->SetAttribute("x", obj.rot.x);
+			rotation->SetAttribute("y", obj.rot.y);
+			rotation->SetAttribute("z", obj.rot.z);
 
 			scale->SetAttribute("x", obj.size.x);
 			scale->SetAttribute("y", obj.size.y);
@@ -115,7 +115,7 @@ namespace principia {
 			XMLElement* scale = doc->NewElement("Scale");
 
 			position->SetAttribute("x", 15);
-			position->SetAttribute("y", 46.25);
+			position->SetAttribute("y", 10);
 			position->SetAttribute("z", 12.410);
 
 			rotation->SetAttribute("x", 0);
@@ -178,7 +178,7 @@ namespace principia {
 			color->SetAttribute("b", 255);
 
 			XMLElement* intensity = doc->NewElement("Intensity");
-			intensity->SetAttribute("i", 1000);
+			intensity->SetAttribute("i", 15);
 
 			XMLElement* ID = doc->NewElement("ID");
 			ID->SetAttribute("id", 0);

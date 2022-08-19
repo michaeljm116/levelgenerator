@@ -74,5 +74,8 @@
     <ClInclude Include="lib\xxhash\xxhash.hpp">
       <Filter>xxhash</Filter>
     </ClInclude>
+    <ClInclude Include="src\helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
