@@ -117,9 +117,9 @@ namespace principia {
 				}
 				o.pos = glm::vec3(_food[i].position.x + 0.5f - (o.size.x * 0.5f), std::fma(o.size.y, 0.5f, floor_depth + 1), _food[i].position.y + 0.5f - (o.size.y * 0.5f));
 				o.rot = RandomRotation();
-				o.type = ObjectType::BOX;
+				o.type = ObjectType::NONE;
 				o.col_type = CollisionType::Ghost;
-				o.flags |= COMPONENT_MATERIAL | COMPONENT_TRANSFORM | COMPONENT_PRIMITIVE | COMPONENT_COLIDER | COMPONENT_HEADNODE;
+				o.flags |= COMPONENT_MATERIAL | COMPONENT_TRANSFORM | COMPONENT_COLIDER | COMPONENT_HEADNODE;
 				ConvertObjectPosition(o);
 				food.emplace_back(o);
 			}

@@ -27,6 +27,7 @@ namespace principia {
 	};
 
 	enum class ObjectType {
+		NONE = 0,
 		SPHERE = -1,
 		BOX = -2,
 		CYLINDER = -3,

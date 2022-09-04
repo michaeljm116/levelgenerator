@@ -72,9 +72,11 @@ namespace principia {
 			node->InsertEndChild(material);
 
 			//---------- ObjectID ----------
-			XMLElement* object = doc->NewElement("Object");
-			object->SetAttribute("ID", (int)obj.type);
-			node->InsertEndChild(object);
+			if (obj.type != ObjectType::NONE) {
+				XMLElement* object = doc->NewElement("Object");
+				object->SetAttribute("ID", (int)obj.type);
+				node->InsertEndChild(object);
+			}
 
 			//---------- Collider ----------
 			XMLElement* collision = doc->NewElement("Collider");
