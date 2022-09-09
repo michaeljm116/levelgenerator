@@ -72,15 +72,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <raylib_LibraryType>DynamicRelease</raylib_LibraryType>
+    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <raylib_LibraryType>DynamicRelease</raylib_LibraryType>
+    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <raylib_LibraryType>DynamicRelease</raylib_LibraryType>
+    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <raylib_LibraryType>DynamicRelease</raylib_LibraryType>
+    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -168,6 +172,7 @@
     <ClInclude Include="src\image_convert.h" />
     <ClInclude Include="src\image_data.h" />
     <ClInclude Include="src\pacman_lvl_detector.h" />
+    <ClInclude Include="src\raylib_helpers.h" />
     <ClInclude Include="src\serialize.h" />
     <ClInclude Include="src\shape_detector.h" />
     <ClInclude Include="src\texture.h" />

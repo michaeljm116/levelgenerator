@@ -17,3 +17,4 @@ glm::vec3 RandomRotation() {
 
 	return rot;
 }
+

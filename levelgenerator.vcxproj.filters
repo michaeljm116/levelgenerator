@@ -77,6 +77,9 @@
     <ClInclude Include="src\helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\raylib_helpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

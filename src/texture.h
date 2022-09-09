@@ -9,7 +9,7 @@
 namespace principia {
 	namespace lvlgen {
 		struct Pixel {
-			unsigned char r = 0, g = 0, b = 0, a = 1;
+			unsigned char r = 0, g = 0, b = 0, a = 255;
 			unsigned char& operator[](int i) {
 				assert(i > -1 && i < 4);
 				return *(&r + i);
@@ -24,6 +24,7 @@ namespace principia {
 			
 			Pixel() {};
 			Pixel(unsigned char _r, unsigned char _g, unsigned char _b, unsigned char _a = 1) : r(_r), g(_g), b(_b), a(_a) {};
+			void DisplayPixel() { std::cout << "r: " << (int)r << " g:" << (int)g << " b:" << (int)b << " a:" << (int)a << "   "; }
 
 		};
 

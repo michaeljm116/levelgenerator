@@ -2,54 +2,76 @@
 #include "pacman_lvl_detector.h"
 #include "serialize.h"
 
-#include <raylib.h>
+#include "raylib_helpers.h"
+
 
 using namespace principia;
 
-std::string display_vec3(glm::vec3 v) {
-	return "x:" + std::to_string(v.x) + " y:" + std::to_string(v.y) + " z:" + std::to_string(v.z);
-}
 
-Image lvlgen_to_raylib_image(const lvlgen::Image& img) {
-	Image ret;
-	ret.width = img.width;
-	ret.height = img.height;
-	ret.mipmaps = 1;
-	ret.format = PixelFormat::PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
-	
-	//ret.data = new char[img.width * img.height * sizeof(lvlgen::Pixel)];
-	//memcpy(ret.data, &img.data, img.width * img.height * sizeof(lvlgen::Pixel));
+Image* lvlgen_to_raylib_image(const lvlgen::Image& img) {
+	Image* ret = new Image();
+	ret->width = img.width;
+	ret->height = img.height;
+	ret->mipmaps = 1;
+	ret->format = PixelFormat::PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
 
-	//static_cast<void*>(img.data);
-
-	auto* data = new std::vector<std::vector<std::vector<char>>>(4, std::vector<std::vector<char>>(img.data.size(), std::vector<char>(img.data[0].size())));
-		//<std::vector<std::array<char, 4>>>(img.data.size(), std::vector<std::array<char,4>>(img.data[0].size()));
+	auto* data = new std::vector<std::vector<std::vector<l_byte>>>(4, std::vector<std::vector<l_byte>>(img.data.size(), std::vector<l_byte>(img.data[0].size())));
 	for (size_t k = 0; k < 4; ++k) {
 		for (size_t i = 0; i < img.data.size(); ++i) {
 			for (size_t j = 0; j < img.data[0].size(); ++j) {
-				data->at(k).at(i)[j] = img.data[i][j][k];
+				data->at(k).at(j)[i] = img.data[i][j][k];
 			}
 		}
 	}
-	ret.data = data;
-	//ret.data = std::copy(std::data(img.data);
+	ret->data = data;
 	return ret;
 }
 
-auto raylib_to_lvlgen_image(const Image& img) {
-	std::vector<std::vector<lvlgen::Pixel>> ret = std::vector<std::vector<lvlgen::Pixel>>(img.width, std::vector<lvlgen::Pixel>(img.height));
 
+
+
+
+void draw_lvlgen_img(lvlgen::Image img) {
+	for (size_t i = 0; i < img.width; ++i) {
+		for (size_t j = 0; j < img.height; ++j) {
+			Color col = lvlgen_pixel_to_color(img.data[i][j]);
+			DrawPixel(i, j, col);
+			img.data[i][j].DisplayPixel();
+		}
+		std::cout << "\n\n";
+	}
+}
+
+auto raylib_to_lvlgen_image(const Image& img) {
+	std::vector<std::vector<lvlgen::Pixel>> data = std::vector<std::vector<lvlgen::Pixel>>(img.width, std::vector<lvlgen::Pixel>(img.height));
 	for (int k = 0; k < 4; ++k) {
 		for (int j = 0; j < img.height; ++j) {
 			for (int i = 0; i < img.width; ++i) {
 				char* d = (char*)img.data;
-				
-				ret[j][i][k] = d[k + 4 * i + 4 * img.width * j];
+				data[j][i][k] = d[k + 4 * i + 4 * img.width * j];
 			}
 		}
 	}
-
+	lvlgen::Image ret = lvlgen::Image(img.width, img.height, 4);
+	ret.data = data;
 	return ret;
+}
+
+auto print_raylib_img_data(const Image& img) {
+	//ret.data = &img.data;
+	std::string channels[5] = { "Red", "Blue", "Green", "Alpha" "\n" };
+	std::cout << "\nImage Start:\n" << channels[0] << std::endl;
+	for (size_t k = 0; k < 4; ++k) {
+		for (size_t i = 0; i < img.width; ++i) {
+			for (size_t j = 0; j < img.height; ++j) {
+				auto* helpa = ((std::vector<std::vector<std::vector<l_byte>>>*)img.data);
+				auto hd = helpa->at(k).at(j)[i];
+				std::cout << " " << (int)hd << " ";
+			}
+			std::cout << std::endl;
+		}
+		std::cout << "\nend\n" << channels[k + 1] << std::endl;
+	}
 }
 
 int main(int argc, char** argv) {
@@ -80,17 +102,27 @@ int main(int argc, char** argv) {
 	int width = img.width * scale;
 	int height = img.height * scale;
 
-	InitWindow(width, height, "raylib [core] example - basic window");
-	auto rimg = LoadImage("C://dev//levelgenerator//assets//pacmap001.png");
-	auto hi = raylib_to_lvlgen_image(rimg);
-	auto test_img = Image(lvlgen_to_raylib_image(img));
-	//ImageResizeNN(test_img, width, height);
-	auto copy = ImageCopy(test_img);
-	ImageResizeNN(&copy,width, height);
-	//ImageDrawCircle(&rimg, width / 2, height / 2, 5, BEIGE);
-	//auto txtr = LoadTextureFromImage(rimg);
-	auto txtr = LoadTextureFromImage(copy);
+	InitWindow(width + width / 3, height, "raylib [core] example - basic window"); 
 
+	auto rimg = LoadImage("C://dev//levelgenerator//assets//pacmap001.png");
+
+	//auto* ltr	= lvlgen_to_raylib_image(img); 
+	//auto rtl	= raylib_to_lvlgen_image(rimg);
+	//auto both	= lvlgen_to_raylib_image(rtl); 
+	//auto back	= raylib_to_lvlgen_image(both);
+		
+
+	//ImageClearBackground(&rimg, BLACK);
+	/*
+	
+	To Justin: Sorry for the suuuuper late reply bro! I've had to do lots of asking around. I
+	
+	
+	*/
+	copy_lvlgen_to_raylib(&rimg, img);
+	ImageResizeNN(&rimg, width, height);
+
+	auto txtr = LoadTextureFromImage(rimg);
 	while (!WindowShouldClose())
 	{
 		BeginDrawing();
