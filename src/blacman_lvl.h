@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include "component_types.h"
-#include "../lib/xxhash/xxhash.hpp"
+//#include "../lib/xxhash/xxhash.hpp"
 
 namespace principia {
 	namespace lvlgen {

@@ -5,7 +5,6 @@
 #include <vector>
 #include <string>
 #include <assert.h>
-
 namespace principia {
 	namespace lvlgen {
 		struct Pixel {

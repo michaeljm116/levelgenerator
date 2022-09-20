@@ -159,6 +159,7 @@
     <ClCompile Include="src\image_convert.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\pacman_lvl_detector.cpp" />
+    <ClCompile Include="src\raylib_helpers.cpp" />
     <ClCompile Include="src\serialize.cpp" />
     <ClCompile Include="src\shape_detector.cpp" />
     <ClCompile Include="src\texture.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="src\helper.h" />
     <ClInclude Include="src\image_convert.h" />
     <ClInclude Include="src\image_data.h" />
+    <ClInclude Include="src\graph.h" />
     <ClInclude Include="src\pacman_lvl_detector.h" />
     <ClInclude Include="src\raylib_helpers.h" />
     <ClInclude Include="src\serialize.h" />

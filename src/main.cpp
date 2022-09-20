@@ -3,10 +3,9 @@
 #include "serialize.h"
 
 #include "raylib_helpers.h"
-
+#include "graph.h"
 
 using namespace principia;
-
 
 Image* lvlgen_to_raylib_image(const lvlgen::Image& img) {
 	Image* ret = new Image();
@@ -26,10 +25,6 @@ Image* lvlgen_to_raylib_image(const lvlgen::Image& img) {
 	ret->data = data;
 	return ret;
 }
-
-
-
-
 
 void draw_lvlgen_img(lvlgen::Image img) {
 	for (size_t i = 0; i < img.width; ++i) {
@@ -74,11 +69,26 @@ auto print_raylib_img_data(const Image& img) {
 	}
 }
 
+std::vector<std::vector<bool>> colormatrix_to_wallsmatrix(lvlgen::ColorGraph cg) {
+	std::vector<std::vector<bool>> ret = std::vector<std::vector<bool>>(cg.size(), std::vector<bool>(cg[0].size()));
+	for (int r = 0; r < cg.size(); ++r) {
+		for (int c = 0; c < cg[0].size(); ++c) {
+			if (cg[r][c] == lvlgen::kColorBlue) ret[r][c] = false;
+			else ret[r][c] = true;
+		}
+	}
+	return ret;
+}
+
 int main(int argc, char** argv) {
 	auto img = lvlgen::Image("assets/pacmap001.bmp");
-	auto converter = lvlgen::ImageConverter(img);
+	/*auto converter = lvlgen::ImageConverter(img);
 	auto lvl = lvlgen::BlacmanLvlConverter(converter.ColorMatrix()).GetLvl();
-	
+
+	auto grid = colormatrix_to_wallsmatrix(converter.ColorMatrix());
+	lvlgen::Graph graf = lvlgen::Graph(grid.size(), grid[0].size());
+	graf.build(grid);
+
 	auto firstwall_pos = lvl.walls[0].pos;
 	auto firstwall_size = lvl.walls[0].size;
 	auto target_pos = glm::vec3(16.f, 1.f, 31.5f);
@@ -87,15 +97,14 @@ int main(int argc, char** argv) {
 	std::cout << "Position (" << display_vec3(firstwall_pos) << ")\n";
 	std::cout << "Size (" << display_vec3(firstwall_size) << ")\n";
 	std::cout << "\nTarget Pos (" << display_vec3(target_pos) << ")\n";
-	std::cout << "Target Size (" << display_vec3(target_size) << ")\n\n";
+	std::cout << "Target Size (" << display_vec3(target_size) << ")\n\n";*/
 	
 	//assert(firstwall_pos == target_pos);
 	//assert(firstwall_size == target_size);
 	
 
-
-	auto serializer = lvlgen::Serializer();
-	serializer.SaveLvl("C:\\dev\\PrincipiumGames\\ShinyAfroMan\\Assets\\Levels\\Test\\Scenes\\testlvl5.xml", lvl, 1);
+	//auto serializer = lvlgen::Serializer();
+	//serializer.SaveLvl("C:\\dev\\PrincipiumGames\\ShinyAfroMan\\Assets\\Levels\\Test\\Scenes\\testlvl5.xml", lvl, 1);
 	//return 0;*/
 
 	int scale = 20;
@@ -119,6 +128,8 @@ int main(int argc, char** argv) {
 	
 	
 	*/
+
+	
 	copy_lvlgen_to_raylib(&rimg, img);
 	ImageResizeNN(&rimg, width, height);
 
@@ -132,4 +143,75 @@ int main(int argc, char** argv) {
 	}
 
 	CloseWindow();
+	
+
+	/*
+	// Initialization
+	//---------------------------------------------------------------------------------------
+	const int screenWidth = 800;
+	const int screenHeight = 600;
+
+	SetConfigFlags(FLAG_WINDOW_UNDECORATED);
+	InitWindow(screenWidth, screenHeight, "raygui - portable window");
+
+	// General variables
+	Vector2 mousePosition = { 0 };
+	Vector2 windowPosition = { 500, 200 };
+	Vector2 panOffset = mousePosition;
+	bool dragWindow = false;
+
+	SetWindowPosition(windowPosition.x, windowPosition.y);
+
+	bool exitWindow = false;
+
+	SetTargetFPS(60);
+	//--------------------------------------------------------------------------------------
+
+	// Main game loop
+	while (!exitWindow && !WindowShouldClose())    // Detect window close button or ESC key
+	{
+		// Update
+		//----------------------------------------------------------------------------------
+		mousePosition = GetMousePosition();
+
+		if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+		{
+			if (CheckCollisionPointRec(mousePosition, Rectangle({ 0, 0, screenWidth, 20 })))
+			{
+				dragWindow = true;
+				panOffset = mousePosition;
+			}
+		}
+
+		if (dragWindow)
+		{
+			windowPosition.x += (mousePosition.x - panOffset.x);
+			windowPosition.y += (mousePosition.y - panOffset.y);
+
+			if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) dragWindow = false;
+
+			SetWindowPosition(windowPosition.x, windowPosition.y);
+		}
+		//----------------------------------------------------------------------------------
+
+		// Draw
+		//----------------------------------------------------------------------------------
+		BeginDrawing();
+
+		ClearBackground(RAYWHITE);
+
+		exitWindow = GuiWindowBox(Rectangle({ 0, 0, screenWidth, screenHeight }), "#198# PORTABLE WINDOW");
+
+		DrawText(TextFormat("Mouse Position: [ %.0f, %.0f ]", mousePosition.x, mousePosition.y), 10, 40, 10, DARKGRAY);
+
+		EndDrawing();
+		//----------------------------------------------------------------------------------
+	}
+
+	// De-Initialization
+	//--------------------------------------------------------------------------------------
+	CloseWindow();        // Close window and OpenGL context
+	//--------------------------------------------------------------------------------------
+
+	return 0;*/
 }
