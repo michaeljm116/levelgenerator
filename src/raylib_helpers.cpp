@@ -1,4 +1,5 @@
 #include "raylib_helpers.h"
+#include <raygui.h>
 
 std::string display_vec3(glm::vec3 v) {
 	return "x:" + std::to_string(v.x) + " y:" + std::to_string(v.y) + " z:" + std::to_string(v.z);
@@ -20,4 +21,44 @@ void copy_lvlgen_to_raylib(Image* rl, const lvlgen::Image& lg) {
 		}
 	}
 
+}
+
+int DisplayMenuOptions(int& active)
+{
+	return GuiToggleGroup(Rectangle({ 165, 400, 140, 25 }), "Load Level\nSave Level\nDisplay Graph", active);
+}
+
+void DisplayKey(bool active) {
+	if(active)
+		GuiPanel(Rectangle({ 560, 25 + 180, 100, 160 }),"White = Node\nBlack = Wall\nPurple = Multi Directional\nBlue = SRC\nRed = DST\nGreen = SEARCH");
+}
+
+void LoadImage()
+{
+	auto img = lvlgen::Image("assets/pacmap001.bmp");
+	
+}
+
+void copy_graph_to_raylib(Image* rl, const lvlgen::Graph& g)
+{
+	assert(rl->width == g.width);
+	assert(rl->height == g.height);
+	for (size_t i = 0; i < g.width; ++i) {
+		for (size_t j = 0; j < g.height; ++j) {
+			//DrawCircle(i, j, lvlgen_pixel_to_color(lg.data[i][j]));
+			ImageDrawPixel(rl, j, i, graph_node_to_color(g.nodes[i][j]));
+
+		}
+	}
+}
+
+Color graph_node_to_color(lvlgen::GraphNode n)
+{
+	if (n.IsValid()) {
+		if (n.info.multi_directional) return PURPLE;
+		else return LIGHTGRAY;
+	}
+	else
+		return BLACK;
+	return Color();
 }

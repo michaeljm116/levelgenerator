@@ -47,9 +47,10 @@ namespace principia {
 
 		struct GraphInfo {
 			int_fast16_t multi_directional = 0;
-			int_fast32_t _pad = 0;
+			int_fast16_t src = 0;
+			int_fast16_t dst = 0;
 
-			GraphInfo(const GraphInfo& gi) : multi_directional(gi.multi_directional) { _pad = 0; };
+			GraphInfo(const GraphInfo& gi) : multi_directional(gi.multi_directional) {};
 			GraphInfo() {};
 		};
 
@@ -82,6 +83,8 @@ namespace principia {
 				int horizonatal = int(left.IsValid() || right.IsValid());
 				info.multi_directional = int_fast16_t((vertical + horizonatal) == 2);
 			}
+			void SetSource(bool b) { info.src = (int_fast16_t)b; }
+			void SetDest(bool b) { info.dst = (int_fast16_t)b; }
 		};
 
 		struct Graph {
