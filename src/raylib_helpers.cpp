@@ -39,7 +39,7 @@ void LoadImage()
 	
 }
 
-void copy_graph_to_raylib(Image* rl, const lvlgen::Graph& g)
+void copy_graph_to_raylib(Image* rl, lvlgen::Graph& g)
 {
 	assert(rl->width == g.width);
 	assert(rl->height == g.height);
@@ -52,13 +52,55 @@ void copy_graph_to_raylib(Image* rl, const lvlgen::Graph& g)
 	}
 }
 
-Color graph_node_to_color(lvlgen::GraphNode n)
+Color graph_node_to_color(lvlgen::GraphNode& n)
 {
 	if (n.IsValid()) {
-		if (n.info.multi_directional) return PURPLE;
+		if (n.info.path) 
+			return BLUE;
+		else if (n.info.dst) 
+			return RED;
+		else if (n.info.src) 
+			return GREEN;
+		else if (n.info.multi_directional) 
+			return PURPLE;
 		else return LIGHTGRAY;
 	}
 	else
 		return BLACK;
 	return Color();
 }
+
+glm::ivec2 Mouse_To_Img_Pos(float scale, Vector2 mouse_position)
+{
+	auto div = 1 / scale;
+	return glm::ivec2(mouse_position.y * div, mouse_position.x * div);
+}
+
+void ResetGraphSrc(lvlgen::Graph& g)
+{
+	for (auto& v : g.nodes) {
+		for (auto& n : v) {
+			n.SetSource(false);
+		}
+	}
+}
+
+void ResetGraphDst(lvlgen::Graph& g)
+{
+	for (auto& v : g.nodes) { for (auto& n : v) n.SetDest(false); }
+}
+
+void SetGraphSrc(lvlgen::Graph& g, glm::ivec2 src)
+{
+	ResetGraphSrc(g);
+	g.nodes[src.x][src.y].SetSource(true);
+	g.src = g.nodes[src.x][src.y].pos;
+}
+
+void SetGraphDst(lvlgen::Graph& g, glm::ivec2 dst)
+{
+	ResetGraphDst(g);
+	g.nodes[dst.x][dst.y].SetDest(true);
+	g.dst = g.nodes[dst.x][dst.y].pos;
+}
+

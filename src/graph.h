@@ -9,6 +9,8 @@
 #include <assert.h>
 #include <glm/glm.hpp>
 #include <vector>
+#include <stack>
+#include <unordered_set>
 
 namespace principia {
 	namespace lvlgen {
@@ -47,8 +49,9 @@ namespace principia {
 
 		struct GraphInfo {
 			int_fast16_t multi_directional = 0;
-			int_fast16_t src = 0;
-			int_fast16_t dst = 0;
+			int_fast16_t path = 0;
+			int_fast8_t src = 0;
+			int_fast8_t dst = 0;
 
 			GraphInfo(const GraphInfo& gi) : multi_directional(gi.multi_directional) {};
 			GraphInfo() {};
@@ -83,14 +86,19 @@ namespace principia {
 				int horizonatal = int(left.IsValid() || right.IsValid());
 				info.multi_directional = int_fast16_t((vertical + horizonatal) == 2);
 			}
-			void SetSource(bool b) { info.src = (int_fast16_t)b; }
-			void SetDest(bool b) { info.dst = (int_fast16_t)b; }
+			void SetSource(bool b) { info.src = (int_fast8_t)b; }
+			void SetDest(bool b) { info.dst = (int_fast8_t)b; }
+			void SetPath(bool b) { info.path = (int_fast16_t)b; }
 		};
 
 		struct Graph {
 			std::vector<std::vector<GraphNode>> nodes;
 			int_fast8_t width;
 			int_fast8_t height;
+
+			GraphIndex src;
+			GraphIndex dst;
+
 			Graph(int w, int h) : width(w), height(h) {
 				nodes = std::vector<std::vector<GraphNode>>(w, std::vector<GraphNode>(h));
 			} 
@@ -143,6 +151,31 @@ namespace principia {
 			void dfs_helper(std::vector<GraphNode> graph, const GraphNode* src, const GraphNode* dst) {
 				if (src->pos == dst->pos)
 					return;
+			}
+		};
+
+		struct PathNode {
+			GraphIndex node;
+			uint_fast16_t direction;
+			//Bit 1 = IsHorizontal
+			//Bit 2 = IsPositive/Forward/Increasing etc..
+			void SetLeft() { direction = 1; }
+			void SetRight() { direction = 3; }
+			void SetUp() { direction = 2; }
+			void SetDown() { direction = 0; }
+			PathNode(GraphIndex i, uint_fast16_t d) : node(i), direction(d) {};
+			PathNode();
+			PathNode(GraphIndex i) : node(i) { direction = 0; };
+
+		};
+		struct GraphPath {
+			std::stack<GraphIndex> nodes;
+			std::unordered_set<GraphIndex> visited;
+
+			std::vector<GraphIndex> PathToVector() {
+				while (!nodes.empty()) {
+					
+				}
 			}
 		};
 	}

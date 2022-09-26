@@ -321,6 +321,8 @@ int main(int argc, char** argv) {
 	int height = img.height * scale;
 
     int menu_options = 0;
+    int graph_options = 0;
+    int search_options = 0;
 
 
 	SetConfigFlags(FLAG_WINDOW_UNDECORATED);
@@ -393,6 +395,30 @@ int main(int argc, char** argv) {
             DrawText("Sorce", width + 2 * tab, panel_height + 80 + tab, 20, GREEN);
             DrawText("Dest", width + 2 * tab, panel_height + 100 + tab, 20, RED);
             DrawText("Path", width + 2 * tab, panel_height + 120 + tab, 20, BLUE);
+
+            //GuiLabelButton(Rectangle({ width + 2 * tab, panel_height + 150, 20, 50 }), "Set Source");
+            graph_options = GuiToggleGroup(Rectangle({ width +  tab, panel_height + 165, extra_box_width - 2 * tab, 25 }), "Set Source\nSet Destination\nDrawPath", graph_options);
+            if (graph_options == 2) {
+                search_options = GuiToggleGroup(Rectangle({ width + tab, panel_height + 250 , extra_box_width - 2 * tab, 40 }), "DFS\nBFS\nA*", search_options);
+            }
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                if (mousePosition.x < width) {
+                    if (graph_options == 0) {
+                        SetGraphSrc(graf, Mouse_To_Img_Pos(scale, mousePosition));
+                        rimg = LoadImage("C://dev//levelgenerator//assets//pacmap001.png");
+                        copy_graph_to_raylib(&rimg, graf);
+                        ImageResizeNN(&rimg, width, height);
+                        txtr = LoadTextureFromImage(rimg);
+                    }
+                    if (graph_options == 1) {
+                        SetGraphDst(graf, Mouse_To_Img_Pos(scale, mousePosition));
+                        rimg = LoadImage("C://dev//levelgenerator//assets//pacmap001.png");
+                        copy_graph_to_raylib(&rimg, graf);
+                        ImageResizeNN(&rimg, width, height);
+                        txtr = LoadTextureFromImage(rimg);
+                    }
+                }
+            }
         }
 
         if (menu_options == 3) {
