@@ -101,6 +101,6 @@ void SetGraphDst(lvlgen::Graph& g, glm::ivec2 dst)
 {
 	ResetGraphDst(g);
 	g.nodes[dst.x][dst.y].SetDest(true);
-	g.dst = g.nodes[dst.x][dst.y].pos;
+	g.dst = g.nodes[dst.x][dst.y].pos; 
 }
 

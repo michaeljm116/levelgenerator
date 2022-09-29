@@ -9,11 +9,12 @@
 #include <assert.h>
 #include <glm/glm.hpp>
 #include <vector>
-#include <stack>
 #include <unordered_set>
 
 namespace principia {
 	namespace lvlgen {
+		
+		//16bits
 		struct GraphIndex {
 			int_fast8_t x = -1;
 			int_fast8_t y = -1;
@@ -25,12 +26,15 @@ namespace principia {
 			bool operator==(const GraphIndex& gi) const {
 				return ((gi.x == x) && (gi.y == y));
 			}
+			bool operator!=(const GraphIndex& gi) const {
+				return ((gi.x != x) || (gi.y != y));
+			}
 
 			//bool operator==(const GraphIndex& lhs, const GraphIndex& rhs) {
 			//	return ((lhs.x == rhs.x) && (lhs.y == rhs.y));
 			//}
 
-			inline bool IsValid() {
+			inline bool IsValid() const {
 				// The last bit decides if its a true index or not
 				// if 0, then its valid, if 1 then its invalid
 				return x >= 0;
@@ -47,6 +51,7 @@ namespace principia {
 			GraphIndex(int _x, int _y) : x(_x), y(_y) {};
 		};
 
+		//48bits
 		struct GraphInfo {
 			int_fast16_t multi_directional = 0;
 			int_fast16_t path = 0;
@@ -57,11 +62,14 @@ namespace principia {
 			GraphInfo() {};
 		};
 
+		//128bits
 		struct GraphNode 
 		{
-			GraphIndex pos;
+			//64bits
 			GraphInfo info;
+			GraphIndex pos;
 
+			//64Bits
 			GraphIndex up;
 			GraphIndex down;
 			GraphIndex left;
@@ -75,108 +83,58 @@ namespace principia {
 				up = GraphIndex(); down = GraphIndex(); left = GraphIndex(); right = GraphIndex();
 			}
 
-			inline bool IsValid() { return pos.IsValid(); }
-			inline bool CanGoUp() { return up.IsValid(); }
-			inline bool CanGoDown() { return down.IsValid(); }
-			inline bool CanGoLeft() { return left.IsValid(); }
-			inline bool CanGoRight() { return right.IsValid(); }
+			// Node[0] = pos, node[1] = up... etc... node[4] = right;
+			//GraphIndex& operator[](int i) {
+			//	assert(i > -1 && i < 5);
+			//	return *(&pos + i);
+			//}
+			const GraphIndex& operator[](int i) const {
+				assert(i > -1 && i < 5);
+				return *(&pos + i);
+			}
 
-			void SetMultiDirectional() {
+			inline bool IsValid() const { return pos.IsValid(); }
+			inline bool CanGoUp() const { return up.IsValid(); }
+			inline bool CanGoDown() const { return down.IsValid(); }
+			inline bool CanGoLeft() const { return left.IsValid(); }
+			inline bool CanGoRight() const { return right.IsValid(); }
+
+			inline void SetMultiDirectional() {
 				int vertical = int(up.IsValid() || down.IsValid());
 				int horizonatal = int(left.IsValid() || right.IsValid());
 				info.multi_directional = int_fast16_t((vertical + horizonatal) == 2);
 			}
-			void SetSource(bool b) { info.src = (int_fast8_t)b; }
-			void SetDest(bool b) { info.dst = (int_fast8_t)b; }
-			void SetPath(bool b) { info.path = (int_fast16_t)b; }
+			inline void SetSource(bool b) { info.src = (int_fast8_t)b; }
+			inline void SetDest(bool b) { info.dst = (int_fast8_t)b; }
+			inline void SetPath(bool b) { info.path = (int_fast16_t)b; }
 		};
 
+		
+
 		struct Graph {
+			enum GraphFlags {
+				FLAG_TARGET_FOUND,
+				FLAG_MULTI_DIRECTIONAL,
+				FLAG_ALREADY_VISITED,
+				FLAG_DEAD_END
+			};
+
 			std::vector<std::vector<GraphNode>> nodes;
 			int_fast8_t width;
 			int_fast8_t height;
 
 			GraphIndex src;
 			GraphIndex dst;
+			Graph(int w, int h);
 
-			Graph(int w, int h) : width(w), height(h) {
-				nodes = std::vector<std::vector<GraphNode>>(w, std::vector<GraphNode>(h));
-			} 
-			
-			void build(std::vector<std::vector<bool>> grid) {
-				//Builds the center, not the edges
-				for (int_fast8_t r = 1; r < width - 1; ++r) {
-					for (int_fast8_t c = 1; c < height - 1; ++c) {
-						buildNode(r, c, grid);
-					}
-				}
-				//Builds the first and the last row
-				for (int_fast8_t c = 0;  c < height; ++c) {
-					buildCornerNode(0, c, grid);
-					buildCornerNode(width - 1, c, grid);
-				}
-				//Builds the first and the last column
-				for (int_fast8_t r = 1; r < width - 1; ++r) {
-					buildCornerNode(r, 0, grid);
-					buildCornerNode(r, height - 1, grid);
-				}
-			}
+			void build(std::vector<std::vector<bool>> grid);
+			void buildNode(int_fast8_t r, int_fast8_t c, std::vector<std::vector<bool>>& grid);			
+			void buildCornerNode(int_fast8_t r, int_fast8_t c, std::vector<std::vector<bool>>& grid);
 
-			void buildNode(int_fast8_t r, int_fast8_t c, std::vector<std::vector<bool>>& grid) {
-				assert(r - 1 >= 0);
-				assert(c - 1 >= 0);
-				assert(r + 1 <= width);
-				assert(c + 1 <= height);
-
-				nodes[r][c].pos.SetIndex(grid[r][c], r, c);
-				nodes[r][c].up.SetIndex(grid[r][c - 1], r, c - 1);
-				nodes[r][c].down.SetIndex(grid[r][c + 1], r, c + 1);
-				nodes[r][c].left.SetIndex(grid[r - 1][c], r - 1, c);
-				nodes[r][c].right.SetIndex(grid[r + 1][c], r + 1, c);
-
-				nodes[r][c].SetMultiDirectional();
-			}
-			
-			void buildCornerNode(int_fast8_t r, int_fast8_t c, std::vector<std::vector<bool>>& grid) {
-				nodes[r][c].pos.SetIndex(grid[r][c], r, c);
-				if (c - 1 >= 0) nodes[r][c].up.SetIndex(grid[r][c - 1], r, c - 1);
-				if (c + 1 <= height - 1) nodes[r][c].down.SetIndex(grid[r][c + 1], r, c + 1);
-				if (r - 1 >= 0)nodes[r][c].left.SetIndex(grid[r - 1][c], r - 1, c);
-				if (r + 1 <= width - 1) nodes[r][c].right.SetIndex(grid[r + 1][c], r + 1, c);
-
-				nodes[r][c].SetMultiDirectional();
-			}
-			
-		private:
-			void dfs_helper(std::vector<GraphNode> graph, const GraphNode* src, const GraphNode* dst) {
-				if (src->pos == dst->pos)
-					return;
-			}
-		};
-
-		struct PathNode {
-			GraphIndex node;
-			uint_fast16_t direction;
-			//Bit 1 = IsHorizontal
-			//Bit 2 = IsPositive/Forward/Increasing etc..
-			void SetLeft() { direction = 1; }
-			void SetRight() { direction = 3; }
-			void SetUp() { direction = 2; }
-			void SetDown() { direction = 0; }
-			PathNode(GraphIndex i, uint_fast16_t d) : node(i), direction(d) {};
-			PathNode();
-			PathNode(GraphIndex i) : node(i) { direction = 0; };
-
-		};
-		struct GraphPath {
-			std::stack<GraphIndex> nodes;
-			std::unordered_set<GraphIndex> visited;
-
-			std::vector<GraphIndex> PathToVector() {
-				while (!nodes.empty()) {
-					
-				}
-			}
+			std::vector<GraphNode> FindTarget();
+			std::vector<GraphNode> FindTarget(GraphIndex src, GraphIndex dst);
+			std::vector<GraphIndex> DetermineDirection(const GraphNode& src, const GraphNode& dst, const GraphNode& prev) const;
+			int CheckForFlags(std::unordered_set<GraphIndex>& visited, GraphNode curr);
 		};
 	}
 }

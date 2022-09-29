@@ -156,6 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="lib\tinyxml2\tinyxml2.cpp" />
+    <ClCompile Include="src\graph.cpp" />
     <ClCompile Include="src\image_convert.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\pacman_lvl_detector.cpp" />
