@@ -322,7 +322,7 @@ int main(int argc, char** argv) {
 
     int menu_options = 0;
     int graph_options = 0;
-    int search_options = 0;
+    int search_options = -1;
 
 
 	SetConfigFlags(FLAG_WINDOW_UNDECORATED);
@@ -336,7 +336,7 @@ int main(int argc, char** argv) {
 
 	float extra_box_width = (float)width / 3;
 	float tab = 10;
-    float panel_height = 160;
+    float panel_height = 175;
 
 	bool dragWindow = false;
 
@@ -375,8 +375,9 @@ int main(int argc, char** argv) {
 		//EndScissorMode();
 
 		DrawText(TextFormat("Mouse Position: [ %.0f, %.0f ]", mousePosition.x, mousePosition.y), width + tab, 30, 10, DARKGRAY);
+        DrawText(TextFormat("Graph Position: [ %.0f, %.0f ]", mousePosition.x / scale, mousePosition.y / scale), width + tab, 45, 10, DARKGRAY);
 		
-        menu_options = GuiToggleGroup(Rectangle({ (float)width + tab, 40 + tab, extra_box_width - 2 * tab, 25 }), "Load Level\nSave Level\nDisplay Graph\nDisplay Image", menu_options);
+        menu_options = GuiToggleGroup(Rectangle({ (float)width + tab, 55 + tab, extra_box_width - 2 * tab, 25 }), "Load Level\nSave Level\nDisplay Graph\nDisplay Image", menu_options);
         if (menu_options == 2) {
             rimg = LoadImage("C://dev//levelgenerator//assets//pacmap001.png");
             copy_graph_to_raylib(&rimg, graf);
@@ -392,14 +393,30 @@ int main(int argc, char** argv) {
             DrawText("Node", width + 2 * tab, panel_height + 20 + tab, 20, LIGHTGRAY);
             DrawText("Wall", width + 2 * tab, panel_height + 40 + tab, 20, BLACK);
             DrawText("Multi Dir", width + 2 * tab, panel_height + 60 + tab, 20, PURPLE);
-            DrawText("Sorce", width + 2 * tab, panel_height + 80 + tab, 20, GREEN);
-            DrawText("Dest", width + 2 * tab, panel_height + 100 + tab, 20, RED);
+            
+            if(graf.src.IsValid())
+                DrawText(TextFormat("Sorce: [ %.0f, %.0f ]", (float)graf.src.x, (float)graf.src.y), width + 2 * tab, panel_height + 80 + tab, 20, GREEN);
+            else
+                DrawText("Sorce", width + 2 * tab, panel_height + 80 + tab, 20, GREEN);
+            
+            if(graf.dst.IsValid())
+                DrawText(TextFormat("Sorce: [ %.0f, %.0f ]", (float)graf.dst.x, (float)graf.dst.y), width + 2 * tab, panel_height + 100 + tab, 20, RED);
+            else
+                DrawText("Dest", width + 2 * tab, panel_height + 100 + tab, 20, RED);
             DrawText("Path", width + 2 * tab, panel_height + 120 + tab, 20, BLUE);
 
             //GuiLabelButton(Rectangle({ width + 2 * tab, panel_height + 150, 20, 50 }), "Set Source");
             graph_options = GuiToggleGroup(Rectangle({ width +  tab, panel_height + 165, extra_box_width - 2 * tab, 25 }), "Set Source\nSet Destination\nDrawPath", graph_options);
             if (graph_options == 2) {
                 search_options = GuiToggleGroup(Rectangle({ width + tab, panel_height + 250 , extra_box_width - 2 * tab, 40 }), "DFS\nBFS\nA*", search_options);
+                if (search_options == 0) {
+                    search_options = -1;
+                    auto path = graf.FindTarget();
+                    rimg = LoadImage("C://dev//levelgenerator//assets//pacmap001.png");
+                    copy_graph_to_raylib(&rimg, graf);
+                    ImageResizeNN(&rimg, width, height);
+                    txtr = LoadTextureFromImage(rimg);
+                }
             }
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                 if (mousePosition.x < width) {

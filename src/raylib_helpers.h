@@ -24,3 +24,4 @@ void ResetGraphSrc(lvlgen::Graph& g);
 void ResetGraphDst(lvlgen::Graph& g);
 void SetGraphSrc(lvlgen::Graph& g, glm::ivec2 src);
 void SetGraphDst(lvlgen::Graph& g, glm::ivec2 dst);
+

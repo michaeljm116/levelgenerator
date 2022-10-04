@@ -30,10 +30,6 @@ namespace principia {
 				return ((gi.x != x) || (gi.y != y));
 			}
 
-			//bool operator==(const GraphIndex& lhs, const GraphIndex& rhs) {
-			//	return ((lhs.x == rhs.x) && (lhs.y == rhs.y));
-			//}
-
 			inline bool IsValid() const {
 				// The last bit decides if its a true index or not
 				// if 0, then its valid, if 1 then its invalid
@@ -42,6 +38,11 @@ namespace principia {
 			inline void SetIndex(bool b, int_fast8_t x_, int_fast8_t y_) {
 				b ? x = x_ : x = -1;
 				y = y_;
+			}
+
+			inline int_fast16_t ToInt16() const {
+				int_fast16_t ret = x << 8;
+				return ret + y;
 			}
 
 			GraphIndex() { x = -1; y = -1; }
@@ -65,6 +66,14 @@ namespace principia {
 		//128bits
 		struct GraphNode 
 		{
+			enum Direction {
+				DIRECTION_NONE = 0,
+				DIRECTION_UP = 1,
+				DIRECTION_DOWN = 2,
+				DIRECTION_LEFT = 3,
+				DIRECTION_RIGHT = 4
+			};
+
 			//64bits
 			GraphInfo info;
 			GraphIndex pos;
@@ -107,16 +116,16 @@ namespace principia {
 			inline void SetSource(bool b) { info.src = (int_fast8_t)b; }
 			inline void SetDest(bool b) { info.dst = (int_fast8_t)b; }
 			inline void SetPath(bool b) { info.path = (int_fast16_t)b; }
+
 		};
-
-		
-
+		 
 		struct Graph {
 			enum GraphFlags {
-				FLAG_TARGET_FOUND,
-				FLAG_MULTI_DIRECTIONAL,
-				FLAG_ALREADY_VISITED,
-				FLAG_DEAD_END
+				FLAG_NONE = 0x0,
+				FLAG_TARGET_FOUND = 0x1,
+				FLAG_MULTI_DIRECTIONAL = 0x2,
+				FLAG_ALREADY_VISITED = 0x4,
+				FLAG_DEAD_END = 0x8
 			};
 
 			std::vector<std::vector<GraphNode>> nodes;
@@ -130,11 +139,16 @@ namespace principia {
 			void build(std::vector<std::vector<bool>> grid);
 			void buildNode(int_fast8_t r, int_fast8_t c, std::vector<std::vector<bool>>& grid);			
 			void buildCornerNode(int_fast8_t r, int_fast8_t c, std::vector<std::vector<bool>>& grid);
+			inline GraphNode& getNode(const GraphIndex& i) { return nodes[i.x][i.y]; };
 
-			std::vector<GraphNode> FindTarget();
-			std::vector<GraphNode> FindTarget(GraphIndex src, GraphIndex dst);
-			std::vector<GraphIndex> DetermineDirection(const GraphNode& src, const GraphNode& dst, const GraphNode& prev) const;
-			int CheckForFlags(std::unordered_set<GraphIndex>& visited, GraphNode curr);
+
+			//DFS for graph
+			auto FindTarget()->std::vector<GraphNode>;
+			auto FindTarget(GraphIndex src, GraphIndex dst)->std::vector<GraphNode>;
+			void TraverseNode(GraphNode& node, GraphNode::Direction dir);
+			auto TraverseGraph(std::unordered_set<int_fast16_t>& visited, std::vector<GraphNode>& temp_path, GraphNode& curr, const GraphNode::Direction& direction)->GraphFlags;
+			auto DetermineDirection(const GraphNode& src, const GraphNode::Direction& prev_dir) const->std::vector<GraphNode::Direction>;
+			auto CheckForFlags(const std::unordered_set<int_fast16_t>& visited, const GraphNode& curr) const->GraphFlags;
 		};
 	}
 }
