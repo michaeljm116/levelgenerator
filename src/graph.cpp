@@ -70,11 +70,13 @@ namespace principia {
 
 			//This is a history of everything visited
 			auto visited = std::vector<std::unordered_set<int_fast16_t>>();
-			visited.push_back(std::unordered_set<int_fast16_t>(curr.pos.ToInt16()));
+			auto firstVisit = std::unordered_set<int_fast16_t>();
+			firstVisit.insert(curr.pos.ToInt16());
+			visited.push_back(firstVisit);
 
 			//This is a history of all changes in direction
 			auto multi_directionals = std::vector < std::pair<GraphNode, std::vector<GraphNode::Direction>>>(); 
-			auto directions = DetermineDirection(curr, GraphNode::DIRECTION_NONE);
+			auto directions = DetermineDirection(curr, GraphIndex(-1,-1));
 			multi_directionals.push_back(std::make_pair(curr, directions));
 
 			//Main Loop, while the target hasnt been found, keep traversing the graph
@@ -85,7 +87,7 @@ namespace principia {
 
 				//This is a list of everything you've visited, 
 				//Same as above for preservation, keep if good, delete if bad
-				auto temp_visited = visited.front();
+				auto temp_visited = visited.back();
 
 				//This goes through the graph in the current direction, and returns a flag if necessary
 				GraphFlags flags = TraverseGraph(temp_visited, temp_path, curr, directions.back());
@@ -106,11 +108,11 @@ namespace principia {
 					break; 
 				}
 				case principia::lvlgen::Graph::FLAG_MULTI_DIRECTIONAL: {
-					auto prev_dir = directions.back();
-					directions = DetermineDirection(curr, prev_dir);
+					const auto& prev_node = temp_path[temp_path.size() - 2].pos;
+					directions = DetermineDirection(curr, prev_node);
 					multi_directionals.push_back(std::make_pair(curr, directions));
 					path.insert(path.end(), temp_path.begin(), temp_path.end());
-					visited.insert(visited.end(), temp_visited.begin(), temp_visited.end());
+					visited.push_back(temp_visited);
 					break; 
 				}
 				case principia::lvlgen::Graph::FLAG_ALREADY_VISITED: {
@@ -146,6 +148,10 @@ namespace principia {
 				}
 				default:
 					break;
+				}
+				if (multi_directionals.size() > 1000) {
+					std::cout << "ERROR: STUCK IN SOME INF LOOP IDK HOW THO";
+					return std::vector<GraphNode>();
 				}
 			}
 
@@ -184,18 +190,18 @@ namespace principia {
 		// Determine Direction tries to send a list of next possible directions by:
 		// Seeing which potential direction is closer to the target
 		// It returns a sorted vector (LIFO) based on closest to farthest
-		std::vector<GraphNode::Direction> Graph::DetermineDirection(const GraphNode& src, const GraphNode::Direction& prev_dir) const {
+		std::vector<GraphNode::Direction> Graph::DetermineDirection(const GraphNode& src, const GraphIndex& prev_node) const {
 			// find the differences
 			std::vector<std::pair<glm::f32, int>> diffs;
 			for (int i = 1; i < 5; ++i) {
-				if (src[i].IsValid() && (i != (int)prev_dir)) {
-					glm::f32 diff = glm::sqrt(glm::exp2(src[i].x - dst.x) + glm::exp2(src[i].y - dst.y));
+				if (src[i].IsValid() && (src[i] != prev_node)) {
+					glm::f32 diff = glm::sqrt(glm::pow((dst.x - src[i].x),2) + glm::pow((src[i].y - dst.y),2));
 					diffs.push_back(std::make_pair(diff, i));
 				}
 			}
 			//sort them by distance in a stack-like-order
 			std::sort(diffs.begin(), diffs.end(), [](const std::pair<glm::f32, int>& a, const std::pair<glm::f32, int>& b) {
-				return a.first < b.first;
+				return a.first > b.first;
 				});
 
 			//make a vector and return;
@@ -209,17 +215,18 @@ namespace principia {
 		// Check for flags takes a node and finds if any flags have been flagged
 		Graph::GraphFlags Graph::CheckForFlags(const std::unordered_set<int_fast16_t>& visited, const GraphNode& curr) const
 		{
+			auto flag = FLAG_NONE;
 			if (visited.find(curr.pos.ToInt16()) != visited.end())
 				return FLAG_ALREADY_VISITED;
 			if (curr.pos == dst)
 				return FLAG_TARGET_FOUND;
 			if (curr.info.multi_directional)
-				return FLAG_MULTI_DIRECTIONAL;
+				flag = FLAG_MULTI_DIRECTIONAL;
 			if (!curr.IsValid())
 				return FLAG_DEAD_END;
-			return FLAG_NONE;
+			return flag;
 		}
 
-
+		//TODO: PROBLEM YOU CAN ONLY RETURN ONE THING
 	}
 }

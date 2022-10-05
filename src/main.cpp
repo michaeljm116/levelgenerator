@@ -411,6 +411,7 @@ int main(int argc, char** argv) {
                 search_options = GuiToggleGroup(Rectangle({ width + tab, panel_height + 250 , extra_box_width - 2 * tab, 40 }), "DFS\nBFS\nA*", search_options);
                 if (search_options == 0) {
                     search_options = -1;
+                    ResetGraphPath(graf);
                     auto path = graf.FindTarget();
                     rimg = LoadImage("C://dev//levelgenerator//assets//pacmap001.png");
                     copy_graph_to_raylib(&rimg, graf);

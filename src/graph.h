@@ -147,7 +147,7 @@ namespace principia {
 			auto FindTarget(GraphIndex src, GraphIndex dst)->std::vector<GraphNode>;
 			void TraverseNode(GraphNode& node, GraphNode::Direction dir);
 			auto TraverseGraph(std::unordered_set<int_fast16_t>& visited, std::vector<GraphNode>& temp_path, GraphNode& curr, const GraphNode::Direction& direction)->GraphFlags;
-			auto DetermineDirection(const GraphNode& src, const GraphNode::Direction& prev_dir) const->std::vector<GraphNode::Direction>;
+			auto DetermineDirection(const GraphNode& src, const GraphIndex& prev_node) const->std::vector<GraphNode::Direction>;
 			auto CheckForFlags(const std::unordered_set<int_fast16_t>& visited, const GraphNode& curr) const->GraphFlags;
 		};
 	}

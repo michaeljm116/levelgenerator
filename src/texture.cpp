@@ -14,7 +14,7 @@ namespace principia {
 				for (j = 0; j < height; ++j) {
 					for (i = 0; i < width; ++i) {
 						unsigned int index = k + channels * i + channels * width * j;
-						data[j][i][k] = pixels[index];
+						data[i][j][k] = pixels[index];
 					}
 				}
 			}

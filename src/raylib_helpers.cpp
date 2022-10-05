@@ -16,7 +16,7 @@ void copy_lvlgen_to_raylib(Image* rl, const lvlgen::Image& lg) {
 	for (size_t i = 0; i < lg.width; ++i) {
 		for (size_t j = 0; j < lg.height; ++j) {
 			//DrawCircle(i, j, lvlgen_pixel_to_color(lg.data[i][j]));
-			ImageDrawPixel(rl, j, i, lvlgen_pixel_to_color(lg.data[i][j]));
+			ImageDrawPixel(rl, i, j, lvlgen_pixel_to_color(lg.data[i][j]));
 
 		}
 	}
@@ -55,12 +55,15 @@ void copy_graph_to_raylib(Image* rl, lvlgen::Graph& g)
 Color graph_node_to_color(lvlgen::GraphNode& n)
 {
 	if (n.IsValid()) {
-		if (n.info.dst) 
+		if (n.info.dst)
 			return RED;
-		else if (n.info.src) 
+		else if (n.info.src)
 			return GREEN;
-		else if (n.info.multi_directional) 
+		else if (n.info.multi_directional) {
+			if (n.info.path)
+				return DARKBLUE;
 			return PURPLE;
+		}
 		else if (n.info.path)
 			return BLUE;
 		else return LIGHTGRAY;
@@ -88,6 +91,14 @@ void ResetGraphSrc(lvlgen::Graph& g)
 void ResetGraphDst(lvlgen::Graph& g)
 {
 	for (auto& v : g.nodes) { for (auto& n : v) n.SetDest(false); }
+}
+
+void ResetGraphPath(lvlgen::Graph& g)
+{
+	for (auto& v : g.nodes) {
+		for (auto& n : v)
+			n.SetPath(false);
+	}
 }
 
 void SetGraphSrc(lvlgen::Graph& g, glm::ivec2 src)
