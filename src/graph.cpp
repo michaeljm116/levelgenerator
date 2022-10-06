@@ -12,6 +12,17 @@ namespace principia {
 
 		void Graph::build(std::vector<std::vector<bool>> grid)
 		{
+			int_fast8_t h = height - 1;
+			//Flip Grid vertically
+			for (int_fast8_t r = 0; r < width; ++r) {
+				for (int_fast8_t c = 0; c < height / 2 + 1; ++c) {
+					auto temp = grid[r][c];
+					auto temp2 = grid[r][h - c];
+					grid[r][h - c] = temp;
+					grid[r][c] = temp2;
+				}
+			}
+
 			//Builds the center, not the edges
 			for (int_fast8_t r = 1; r < width - 1; ++r) {
 				for (int_fast8_t c = 1; c < height - 1; ++c) {

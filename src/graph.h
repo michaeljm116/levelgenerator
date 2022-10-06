@@ -119,7 +119,7 @@ namespace principia {
 
 		};
 		 
-		struct Graph {
+		struct Graph  {
 			enum GraphFlags {
 				FLAG_NONE = 0x0,
 				FLAG_TARGET_FOUND = 0x1,
