@@ -12,13 +12,15 @@ namespace principia {
 
 		void Graph::build(std::vector<std::vector<bool>> grid)
 		{
-			int_fast8_t h = height - 1;
 			//Flip Grid vertically
+			int_fast8_t h = height - 1;
+			int_fast8_t half = int_fast8_t(height / 2);
 			for (int_fast8_t r = 0; r < width; ++r) {
-				for (int_fast8_t c = 0; c < height / 2 + 1; ++c) {
-					auto temp = grid[r][c];
-					auto temp2 = grid[r][h - c];
-					grid[r][h - c] = temp;
+				for (int_fast8_t c = 0; c < half; ++c) {
+					int_fast8_t end = h - c;
+					bool temp = grid[r][c];
+					bool temp2 = grid[r][end];
+					grid[r][end] = temp;
 					grid[r][c] = temp2;
 				}
 			}
@@ -49,8 +51,8 @@ namespace principia {
 			assert(c + 1 <= height);
 
 			nodes[r][c].pos.SetIndex(grid[r][c], r, c);
-			nodes[r][c].up.SetIndex(grid[r][c - 1], r, c - 1);
-			nodes[r][c].down.SetIndex(grid[r][c + 1], r, c + 1);
+			nodes[r][c].up.SetIndex(grid[r][c + 1], r, c + 1);
+			nodes[r][c].down.SetIndex(grid[r][c - 1], r, c - 1);
 			nodes[r][c].left.SetIndex(grid[r - 1][c], r - 1, c);
 			nodes[r][c].right.SetIndex(grid[r + 1][c], r + 1, c);
 
@@ -60,8 +62,8 @@ namespace principia {
 		// Same as above but with the checks since its in a corner
 		void Graph::buildCornerNode(int_fast8_t r, int_fast8_t c, std::vector<std::vector<bool>>& grid) {
 			nodes[r][c].pos.SetIndex(grid[r][c], r, c);
-			if (c - 1 >= 0) nodes[r][c].up.SetIndex(grid[r][c - 1], r, c - 1);
-			if (c + 1 <= height - 1) nodes[r][c].down.SetIndex(grid[r][c + 1], r, c + 1);
+			if (c - 1 >= 0) nodes[r][c].down.SetIndex(grid[r][c - 1], r, c - 1);
+			if (c + 1 <= height - 1) nodes[r][c].up.SetIndex(grid[r][c + 1], r, c + 1);
 			if (r - 1 >= 0)nodes[r][c].left.SetIndex(grid[r - 1][c], r - 1, c);
 			if (r + 1 <= width - 1) nodes[r][c].right.SetIndex(grid[r + 1][c], r + 1, c);
 

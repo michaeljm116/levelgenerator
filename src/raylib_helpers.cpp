@@ -44,9 +44,9 @@ void copy_graph_to_raylib(Image* rl, lvlgen::Graph& g)
 	assert(rl->width == g.width);
 	assert(rl->height == g.height);
 	for (size_t i = 0; i < g.width; ++i) {
-		for (size_t j = 0; j < g.height; ++j) {
+		for (int j = 0; j < g.height; ++j) {
 			//DrawCircle(i, j, lvlgen_pixel_to_color(lg.data[i][j]));
-			ImageDrawPixel(rl, i, j, graph_node_to_color(g.nodes[i][j]));
+			ImageDrawPixel(rl, i, g.height - 1 - j, graph_node_to_color(g.nodes[i][j]));
 
 		}
 	}
@@ -79,6 +79,7 @@ glm::ivec2 Mouse_To_Img_Pos(float scale, Vector2 mouse_position)
 	return glm::ivec2(mouse_position.x * div, mouse_position.y * div);
 }
 
+
 void ResetGraphSrc(lvlgen::Graph& g)
 {
 	for (auto& v : g.nodes) {
@@ -104,14 +105,14 @@ void ResetGraphPath(lvlgen::Graph& g)
 void SetGraphSrc(lvlgen::Graph& g, glm::ivec2 src)
 {
 	ResetGraphSrc(g);
-	g.nodes[src.x][src.y].SetSource(true);
-	g.src = g.nodes[src.x][src.y].pos;
+	g.nodes[src.x][g.height - 1 - src.y].SetSource(true);
+	g.src = g.nodes[src.x][g.height - 1 - src.y].pos;
 }
 
 void SetGraphDst(lvlgen::Graph& g, glm::ivec2 dst)
 {
 	ResetGraphDst(g);
-	g.nodes[dst.x][dst.y].SetDest(true);
-	g.dst = g.nodes[dst.x][dst.y].pos; 
+	g.nodes[dst.x][g.height - 1 - dst.y].SetDest(true);
+	g.dst = g.nodes[dst.x][g.height - 1 - dst.y].pos; 
 }
 

@@ -117,7 +117,7 @@ namespace principia {
 			XMLElement* scale = doc->NewElement("Scale");
 
 			position->SetAttribute("x", 15);
-			position->SetAttribute("y", 10);
+			position->SetAttribute("y", 45);
 			position->SetAttribute("z", 12.410);
 
 			rotation->SetAttribute("x", 0);
@@ -180,7 +180,7 @@ namespace principia {
 			color->SetAttribute("b", 255);
 
 			XMLElement* intensity = doc->NewElement("Intensity");
-			intensity->SetAttribute("i", 15);
+			intensity->SetAttribute("i", 1000);
 
 			XMLElement* ID = doc->NewElement("ID");
 			ID->SetAttribute("id", 0);

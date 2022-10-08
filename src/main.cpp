@@ -307,7 +307,7 @@ int main(int argc, char** argv) {
 	//assert(firstwall_size == target_size);
 	
 
-	//auto serializer = lvlgen::Serializer();
+	auto serializer = lvlgen::Serializer();
 	//serializer.SaveLvl("C:\\dev\\PrincipiumGames\\ShinyAfroMan\\Assets\\Levels\\Test\\Scenes\\testlvl5.xml", lvl, 1);
 	//return 0;
 
@@ -375,9 +375,13 @@ int main(int argc, char** argv) {
 		//EndScissorMode();
 
 		DrawText(TextFormat("Mouse Position: [ %.0f, %.0f ]", mousePosition.x, mousePosition.y), width + tab, 30, 10, DARKGRAY);
-        DrawText(TextFormat("Graph Position: [ %.0f, %.0f ]", mousePosition.x / scale, mousePosition.y / scale), width + tab, 45, 10, DARKGRAY);
+        DrawText(TextFormat("Graph Position: [ %.0f, %.0f ]", mousePosition.x / scale, graf.height - (mousePosition.y / scale)), width + tab, 45, 10, DARKGRAY);
 		
         menu_options = GuiToggleGroup(Rectangle({ (float)width + tab, 55 + tab, extra_box_width - 2 * tab, 25 }), "Load Level\nSave Level\nDisplay Graph\nDisplay Image", menu_options);
+        if (menu_options == 1) {
+            menu_options = -1;
+            serializer.SaveLvl("C:\\dev\\PrincipiumGames\\ShinyAfroMan\\Assets\\Levels\\Test\\Scenes\\testlvl5.xml", lvl, 1);
+        }
         if (menu_options == 2) {
             rimg = LoadImage("C://dev//levelgenerator//assets//pacmap001.png");
             copy_graph_to_raylib(&rimg, graf);

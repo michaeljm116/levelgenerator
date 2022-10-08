@@ -27,7 +27,7 @@ namespace principia {
 			if (_visited[r][c]) return;
 			_visited[r][c] = true;
 			auto color = graph[r][c];
-			auto return_data = ImageData(kTypeNone, kSubTypeNone, vec2(1,1), vec2(c, r));
+			auto return_data = ImageData(kTypeNone, kSubTypeNone, vec2(1,1), vec2(r, c));
 			
 			switch (color)
 			{
@@ -191,7 +191,7 @@ namespace principia {
 
 			return size;
 		}
-		int BlacmanLvlConverter::CheckWallDown(int r, int c, const ColorGraph& graph)
+		int BlacmanLvlConverter::CheckWallRight(int r, int c, const ColorGraph& graph)
 		{
 			int size = 1;
 			bool can_go_right = ((r + 1) < graph.size()) && (graph[r + 1][c] == kColorBlue);
@@ -204,7 +204,7 @@ namespace principia {
 			}
 			return size;
 		}
-		int BlacmanLvlConverter::CheckWallRight(int r, int c, const ColorGraph& graph)
+		int BlacmanLvlConverter::CheckWallDown(int r, int c, const ColorGraph& graph)
 		{
 			int size = 1;
 			bool can_go_down = ((c + 1) < graph[0].size()) && (graph[r][c + 1] == kColorBlue);
