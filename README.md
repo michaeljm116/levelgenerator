@@ -8,13 +8,11 @@ Original File:
 ![Alt text](screenshots/pacmap001.bmp)
 
 Imported Image:
-![Alt text](screenshots/2024-06-26-00-29-53-Clipboard.png)
-
+![Alt text](screenshots/2024-06-26-00_29_53-Clipboard.png)
 Image Data:
-![Alt text](screenshots/2024-06-26-00-31-06-Clipboard.png)
-
-DFS of Image:
-![Alt text](screenshots/2024-06-26-00-41-48-Clipboard.png)
+![Alt text](screenshots/2024-06-26-00_31_06-Clipboard.png)
+Path Search of Image:
+![Alt text](screenshots/2024-06-26-00_41_48-Clipboard.png)
 
 Image in my engine:
 *Lost it but i promise it worked!*
