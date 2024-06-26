@@ -84,7 +84,7 @@ namespace principia {
 			std::vector<ObjectData> walls;
 			std::vector<ObjectData> food;
 			std::vector<ObjectData> characters;
-			float floor_depth = 1.f;
+			float floor_depth = 0.f;
 
 			walls.reserve(_walls.size());
 			food.reserve(_food.size());
@@ -97,6 +97,7 @@ namespace principia {
 				o.pos = glm::vec3(_walls[i].position.x, std::fma(o.size.y, 0.5f, floor_depth), _walls[i].position.y);
 				o.type = ObjectType::BOX;
 				o.col_type = CollisionType::Box;
+				o.dynamic = false;
 				o.flags |= COMPONENT_MATERIAL | COMPONENT_TRANSFORM | COMPONENT_PRIMITIVE | COMPONENT_COLIDER | COMPONENT_HEADNODE;
 				ConvertObjectPosition(o);
 				walls.emplace_back(o);
@@ -130,16 +131,28 @@ namespace principia {
 				if (_characters[i].type == kTypePlayer) {
 					o = ObjectData("SnakeGreen");
 					o.name = "BlacMan";
-					o.size = glm::vec3(0.8f);
+					o.size = glm::vec3(0.5f);
+					o.col_type = CollisionType::Sphere;
+					o.prefab.name = "PlayerGhost";
+					o.prefab.dir = "C:/dev/PrincipiumGames/ShinyAfroMan/Assets/Levels/Test/Prefabs/";
+					o.prefab.can_serialize = false;
+					o.prefab.save = false;
+					o.prefab.load_needed = true;
+
+					o.flags |= COMPONENT_TRANSFORM | COMPONENT_PREFAB;
+
 				}
 				else {
 					o.name = "Enemy(" + std::to_string(i) + ")";
-					o.size = glm::vec3(0.75f);
+					o.size = glm::vec3(0.45f);
+					o.col_type = CollisionType::Ghost;
+
+					o.flags = COMPONENT_TRANSFORM;
+					
 				}
-				o.pos = glm::vec3(_characters[i].position.x, std::fma(o.size.y, 0.5f, floor_depth), _characters[i].position.y);
-				o.type = ObjectType::SPHERE;
-				o.col_type = CollisionType::Sphere;
-				o.flags |= COMPONENT_MATERIAL | COMPONENT_TRANSFORM | COMPONENT_PRIMITIVE | COMPONENT_COLIDER | COMPONENT_HEADNODE;
+				o.pos = glm::vec3(_characters[i].position.x, std::fma(o.size.y, 0.5f, floor_depth + 1.5), _characters[i].position.y);
+				o.type = ObjectType::CYLINDER;
+				//o.flags = COMPONENT_TRANSFORM; //|= COMPONENT_MATERIAL | COMPONENT_TRANSFORM | COMPONENT_PRIMITIVE | COMPONENT_COLIDER | COMPONENT_HEADNODE;
 				ConvertObjectPosition(o);
 				characters.emplace_back(o);
 			}
@@ -147,9 +160,9 @@ namespace principia {
 
 			ObjectData floor = ObjectData("Black");
 			floor.name = "Floor";
-			floor.size = glm::vec3(level_size.x * 0.5f, 1, level_size.y * 0.5f);
+			floor.size = glm::vec3(level_size.x * 0.5f, 0.001f, level_size.y * 0.5f);
 			floor.pos = glm::vec3(level_size.x * 0.5f, floor_depth, level_size.y * 0.5f);
-			floor.col_type = CollisionType::Box;
+			floor.col_type = CollisionType::Plane;
 			floor.type = ObjectType::BOX;
 			floor.flags |= COMPONENT_MATERIAL | COMPONENT_TRANSFORM | COMPONENT_PRIMITIVE | COMPONENT_COLIDER | COMPONENT_HEADNODE;
 

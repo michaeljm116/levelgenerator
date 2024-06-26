@@ -7,6 +7,15 @@
 
 namespace principia {
 	namespace lvlgen {
+
+		struct PrefabData {
+			std::string dir;
+			std::string name;
+			bool can_serialize = false;
+			bool load_needed = true;
+			bool save = false;
+		};
+
 		struct ObjectData
 		{
 			ObjectData() {};
@@ -25,6 +34,8 @@ namespace principia {
 			glm::vec3 pos;
 			glm::vec3 rot = glm::vec3(0);
 			int material;
+			bool dynamic = true;
+			PrefabData prefab;
 		};
 
 		struct BlacmanLvl {

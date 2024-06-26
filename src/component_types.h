@@ -23,7 +23,8 @@ namespace principia {
 		COMPONENT_GUI = 0X40000,
 		COMPONENT_BUTTON = 0x80000,
 		COMPONENT_JOINT = 0x100000,
-		COMPONENT_HEADNODE = 0x20000
+		COMPONENT_HEADNODE = 0x200000,
+		COMPONENT_PREFAB = 0x400000
 	};
 
 	enum class ObjectType {
@@ -39,6 +40,7 @@ namespace principia {
 		Box = 0x01,
 		Capsule = 0x02,
 		Other = 0x03,
-		Ghost = 0x04
+		Ghost = 0x04,
+		Plane = 0x05
 	};
 }
