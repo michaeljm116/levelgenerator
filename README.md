@@ -12,7 +12,7 @@ Imported Image:
 Image Data:
 ![Alt text](screenshots/2024-06-26-00_31_06-Clipboard.png)
 Path Search of Image:
-![Alt text](screenshots/2024-06-26-00_41_48-Clipboard.png)
+![Alt text](screenshots/2024-06-26-00_31_48-Clipboard.png)
 
 Image in my engine:
 *Lost it but i promise it worked!*
